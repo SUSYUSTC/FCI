@@ -111,15 +111,8 @@ def get_combinations_indices(n, k):
 def get_ids(occs):
     shape = occs.shape[:-1]
     occs = occs.reshape((-1, nocc))
-    length = len(occs)
-    occs = occs.astype(str)
-    spaces = np.full((length, ), '_')
-    result = np.full((length, ), '')
-    for i in range(nocc):
-        result = np.char.add(result, occs[:, i])
-        if i < nocc - 1:
-            result = np.char.add(result, spaces)
-    return result.reshape(shape)
+    ids = np.ravel_multi_index(tuple(occs.T), (nall, ) * nocc)
+    return ids.reshape(shape)
 
 
 def get_id_indices(ids, ids_all):
@@ -257,3 +250,5 @@ print('iterative solver energy', E_iterative)
 # explicit FCI Hamiltoninan from pyscf
 #H = fci.direct_spin1.pspace(h1, h2, nall, (nocc, nocc), np=N**2 * 4)[1]
 #print(np.linalg.eigh(H)[0][0])
+#err_H = np.linalg.norm(H[order2_pyscf][:, order2_pyscf] - Hamitonian_matrix)
+#print(err_H)
